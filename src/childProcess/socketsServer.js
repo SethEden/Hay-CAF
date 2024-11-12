@@ -21,7 +21,6 @@ import * as app_sys from '../constants/application.system.constants.js';
 // External imports
 import haystacks from '@haystacks/async';
 import hayConst from '@haystacks/constants';
-import fs from 'fs/promises';
 import path from 'path';
 import process from 'process';
 import { createServer } from 'net';
@@ -38,86 +37,18 @@ const SOCKET = {
   port: 3000,
 };
 let persistentBuffer = '';
-const messageDelimiter = '##END##'
-const chunkDelimiter = '|~|';
+const messageDelimiter = bas.cHash.repeat(2) + wrd.cEND + bas.cHash.repeat(2); // ##END##
 
 /**
- * @function safeJsonParse1
+ * @function safeJsonParse
  * @description Safely parses socket chunks into javascript objects.
  * @param {buffer} buffer - The buffer value to be converted.
  * @return {object} A JSON object that is safely parsed from the input JSON string.
  * @author Karl-Edward FP Jean-Mehu
  * @date 2023/12/29
  */
-async function safeJsonParse1(buffer) {
-  const functionName = safeJsonParse1.name;
-  let chunkString = buffer.toString(gen.cUTF8).trim();
-  await haystacks.consoleLog(namespacePrefix, functionName, msg.cBEGIN_Function);
-  await haystacks.consoleLog(namespacePrefix, functionName, msg.cbufferIs + buffer);
-  let returnData;
-  const REGEX = /\{([^{}]*)\}/g;
-
-  // Additional string mutations to try and prevent JSON parsing failure conditions.
-  // *******************************
-  // Apply some direct mutation of the buffer strings to catch and prevent any hard failures of the JSON parsing process.
-  // buffer = buffer.replace(/'/g, "\\'").replace(/"/g, '\\"'); // Quote inconsistency - Possible double escape outcome
-  // buffer = buffer.replace(/(?<!\\)'/g, "\\'").replace(/(?<!\\)"/g, '\\"'); // Quote inconsistency - No over-escape
-  // buffer = buffer.replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Strip out any non-visible ASCII control characters while preserving international characters
-  // buffer = buffer.replace(/([&*%$])/g, '\\$1'); // Escaped Characters
-  // buffer = buffer.trim().replace(/\s+/g, ' '); // White space normalization
-  // buffer = buffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n'); // Line endings
-  // buffer = buffer.replace(/[^\x20-\x7E]/g, ''); // Special character handling - non-international
-  // buffer = buffer.replace(/,\s*/g, ', '); // consistent delimiter usage
-  // buffer = decodeURIComponent(encodeURIComponent(buffer)); // Encoding-Decoding issues
-
-  // Ensure all brackets have matching pairs
-  // const pairs = { '(': ')', '{': '}', '[': ']' };
-  // for (let open in pairs) {
-  //   let close = pairs[open];
-  //   let diff = (buffer.match(new RegExp(`\\${open}`, 'g')) || []).length - (buffer.match(new RegExp(`\\${close}`, 'g')) || []).length;
-  //   if (diff > 0) {
-  //     buffer += close.repeat(diff);
-  //   }
-  // }
-  // *******************************
-
-  try {
-    if (chunkString) {
-      chunkString = '[' + chunkString.replace(/}\s*{/g, '},{') + ']';
-      await haystacks.consoleLog(namespacePrefix, functionName, 'processed chunkString is: ' + chunkString);
-      returnData = JSON.parse(chunkString);
-    }
-  } catch(e) {
-    await haystacks.consoleLog(namespacePrefix, functionName, 'caught an error: ' + e.message);
-    if (!returnData) {
-      await haystacks.consoleLog(namespacePrefix, functionName, 'return data exists: ' + JSON.stringify(returnData));
-      returnData = [];
-      const temp = chunkString.matchAll(REGEX);
-      await haystacks.consoleLog(namespacePrefix, functionName, 'temp is: ' + JSON.stringify(temp));
-      for (const i of temp) {
-        await haystacks.consoleLog(namespacePrefix, functionName, 'i is: ' + i);
-        returnData.push(JSON.parse(i[0]));
-        await haystacks.consoleLog(namespacePrefix, functionName, 'returnData iterator is: ' +  JSON.stringify(returnData));
-      }
-
-      if (!returnData) throw e;
-    }
-  }
-  await haystacks.consoleLog(namespacePrefix, functionName, msg.creturnDataIs +  JSON.stringify(returnData));
-  await haystacks.consoleLog(namespacePrefix, functionName, msg.cEND_Function);
-  return returnData;
-}
-
-/**
- * @function safeJsonParse2
- * @description Safely parses socket chunks into javascript objects.
- * @param {buffer} buffer - The buffer value to be converted.
- * @return {object} A JSON object that is safely parsed from the input JSON string.
- * @author Karl-Edward FP Jean-Mehu
- * @date 2023/12/29
- */
-async function safeJsonParse2(buffer) {
-  const functionName = safeJsonParse2.name;
+async function safeJsonParse(buffer) {
+  const functionName = safeJsonParse.name;
   let chunkString = buffer.toString(gen.cUTF8).trim();
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cBEGIN_Function);
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cbufferIs + buffer);
@@ -126,11 +57,13 @@ async function safeJsonParse2(buffer) {
 
   // append the incoming chunkString to the persistent buffer.
   persistentBuffer += chunkString;
-  await haystacks.consoleLog(namespacePrefix, functionName, 'persistentBuffer after appending new chunk is now: ' + persistentBuffer);
+  // persistentBuffer after appending new chunk is now:
+  await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage01 + persistentBuffer);
 
   // Step 1: Split by messageDelimiter to identify complete messages
   let messages = persistentBuffer.split(messageDelimiter);
-  await haystacks.consoleLog(namespacePrefix, functionName, 'Messages array after messageDelimiter split: ' + JSON.stringify(messages));
+  // Messages array after messageDelimiter split:
+  await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage02 + JSON.stringify(messages));
 
   // Step 2: Process each message that appears complete
   for (let i = 0; i < messages.length - 1; i++) {
@@ -142,25 +75,34 @@ async function safeJsonParse2(buffer) {
       try {
         // Attempt to parse as JSON; if successful, add to returnData
         const json = JSON.parse(message);
-        await haystacks.consoleLog(namespacePrefix, functionName, 'Successfully parsed json data is: ' + JSON.stringify(json));
+        // Successfully parsed json data is:
+        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage03 + JSON.stringify(json));
         returnData.push(json); // Add fully formed JSON objects
       } catch (error) {
         // If JSON parsing fails, use REGEX to extract valid JSON fragments
-        await haystacks.consoleLog(namespacePrefix, functionName, `JSON parse error at iteration ${i}: attempting REGEX extraction: ${error.message}`);
-        await haystacks.consoleLog(namespacePrefix, functionName, 'Error-causing message content: ' + message);
+        // JSON parse error at iteration
+        // attempting REGEX extraction: 
+        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage04 + i + app_msg.csafeJsonParseMessage05 + error.message);
+        // Error-causing message content:
+        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage06 + message);
 
-        const temp = message.matchAll(REGEX);
-        await haystacks.consoleLog(namespacePrefix, functionName, 'Attempting REGEX extraction for matches in error-causing message.');
-        await haystacks.consoleLog(namespacePrefix, functionName, 'temp is: ' + temp);
-        for (const match of temp) {
-          await haystacks.consoleLog(namespacePrefix, functionName, 'REGEX match string is: ' + match);
+        const tempData = message.matchAll(REGEX);
+        // Attempting REGEX extraction for matches in error-causing message.
+        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage07);
+        // tempData is:
+        await haystacks.consoleLog(namespacePrefix, functionName, msg.ctempDataIs + tempData);
+        for (const match of tempData) {
+          // REGEX match string is:
+          await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage08 + match);
           try {
             returnData.push(JSON.parse(match[0]));
-            await haystacks.consoleLog(namespacePrefix, functionName, 'Successfully parsed REGEX JSON fragment');
+            // Successfully parsed REGEX JSON fragment
+            await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage09);
           } catch (e) {
-            await haystacks.consoleLog(namespacePrefix, functionName, `Skipping unparsable JSON fragment: ${match[0]}`);
+            // Skipping unparsable JSON fragment:
+            await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage10 + match[0]);
           }
-        } // End-for (const match of temp)
+        } // End-for (const match of tempData)
       } // End-catch (error)
     } // End-if (message.length > 0)
     await haystacks.consoleLog(namespacePrefix, functionName, msg.cEND_ithIteration + i);
@@ -168,7 +110,8 @@ async function safeJsonParse2(buffer) {
 
   // Step 3: Retain any unprocessed part (last item) in the persistent buffer for next call.
   persistentBuffer = messages[messages.length - 1];
-  await haystacks.consoleLog(namespacePrefix, functionName, 'persistentBuffer AFTER processing is: ' + persistentBuffer);
+  // persistentBuffer AFTER processing is:
+  await haystacks.consoleLog(namespacePrefix, functionName, app_msg.csafeJsonParseMessage11 + persistentBuffer);
 
   await haystacks.consoleLog(namespacePrefix, functionName, msg.creturnDataIs +  JSON.stringify(returnData));
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cEND_Function);
@@ -364,46 +307,31 @@ export default function socketsServer() {
       await haystacks.consoleLog(namespacePrefix, functionName + eventName, msg.cBEGIN_Event);
       await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.cchunkIs + JSON.stringify(chunk));
       try {
-        const json = await safeJsonParse2(chunk.toString().trim());
-        await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Safe Parsed JSON data: ' + JSON.stringify(json));
+        const json = await safeJsonParse(chunk.toString().trim());
+        // Safe Parsed JSON data:
+        await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage01 + JSON.stringify(json));
 
         if (json) {
           let hasMessage = false;
 
           if (Array.isArray(json)) {
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'JSON is an array with length: ' + json.length);
-            // console.log('\r\njson is an array...\r\n')
-            // json.find(obj1 => {
-            //   // obj1 is:
-            //   // console.log(app_msg.cobj1Is, obj1);
-            //   haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.cobj1Is + JSON.stringify(obj1));
-            //   const objMessage = obj1[wrd.cmessage];
-            //   // objMessage is:
-            //   // console.log(app_msg.cobjMessageIs + objMessage);
-            //   haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.cobjMessageIs + objMessage);
-            //   if (objMessage.includes(app_msg.cTestResultsLog) && objMessage.includes(wrd.cTest + bas.cUnderscore) && 
-            //   (objMessage.toLowerCase().includes(wrd.cpass) ||
-            //   objMessage.toLowerCase().includes(wrd.cwarning) ||
-            //   objMessage.toLowerCase().includes(wrd.cfail))) {
-            //     await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Identified test result in array item.');
-            //     if (objMessage.toLowerCase().includes(wrd.cpass)) { testResult = wrd.cpass; }
-            //     else if (objMessage.toLowerCase().includes(wrd.cwarning)) { testResult = wrd.cwarning; }
-            //     else if (objMessage.toLowerCase().includes(wrd.cfail)) { testResult = wrd.cfail; }
-            //     return true;
-            //   }
-            // });
+            // JSON is an array with length:
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage02 + json.length);
             for (const obj1 of json) {
               // Log the current object being processed
-              await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Processing array item: ' + JSON.stringify(obj1));
+              // Processing array item:
+              await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage03 + JSON.stringify(obj1));
 
               const objMessage = obj1[wrd.cmessage];
-              await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Extracted message from array item: ' + objMessage);
+              // Extracted message from array item:
+              await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage04 + objMessage);
 
               if (objMessage && objMessage.includes(app_msg.cTestResultsLog) && objMessage.includes(wrd.cTest + bas.cUnderscore) && 
-                  (objMessage.toLowerCase().includes(wrd.cpass) ||
-                  objMessage.toLowerCase().includes(wrd.cwarning) ||
-                  objMessage.toLowerCase().includes(wrd.cfail))) {
-                await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Identified test result in array item.');
+              (objMessage.toLowerCase().includes(wrd.cpass) ||
+              objMessage.toLowerCase().includes(wrd.cwarning) ||
+              objMessage.toLowerCase().includes(wrd.cfail))) {
+                // Identified test result in array item.
+                await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage05);
                 if (objMessage.toLowerCase().includes(wrd.cpass)) { testResult = wrd.cpass; }
                 else if (objMessage.toLowerCase().includes(wrd.cwarning)) { testResult = wrd.cwarning; }
                 else if (objMessage.toLowerCase().includes(wrd.cfail)) { testResult = wrd.cfail; }
@@ -414,17 +342,21 @@ export default function socketsServer() {
             }
 
             hasMessage = json.every(v => v[wrd.cmessage]);
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Result of every() check for messages: ' + hasMessage);
+            // Result of every() check for messages:
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage06 + hasMessage);
           } else {
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'JSON is an object');
+            // JSON is an object
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage07);
             hasMessage = json[wrd.cmessage];
             if (hasMessage) {
-              await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Extracted message from JSON object: ' + hasMessage);
+              // Extracted message from JSON object:
+              await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage08 + hasMessage);
               if (hasMessage.includes(app_msg.cTestResultsLog) && hasMessage.includes(wrd.cTest + bas.cUnderscore) && 
               (hasMessage.toLowerCase().includes(wrd.cpass) ||
               hasMessage.toLowerCase().includes(wrd.cwarning) ||
               hasMessage.toLowerCase().includes(wrd.cfail))) {
-                await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Identified test result in JSON object.');
+                // Identified test result in JSON object.
+                await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage09);
                 if (hasMessage.toLowerCase().includes(wrd.cpass)) { testResult = wrd.cpass; }
                 else if (hasMessage.toLowerCase().includes(wrd.cwarning)) { testResult = wrd.cwarning; }
                 else if (hasMessage.toLowerCase().includes(wrd.cfail)) { testResult = wrd.cfail; }
@@ -433,17 +365,19 @@ export default function socketsServer() {
           }
 
           if (hasMessage) {
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Enqueuing parsed JSON to message queue');
+            // Enqueuing parsed JSON to message queue
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage10);
             await messageQueue.enqueue(json);
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Enqueued successfully. Queue size: ' + await messageQueue.size());
-            // Message Queue size:
-            // console.log(app_msg.cMessageQueueSize, await messageQueue.size());
+            // Enqueued successfully. Queue size:
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage11 + await messageQueue.size());
           }
 
           while(!await messageQueue.isEmpty()) {
             const {message} = await messageQueue.dequeue();
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, 'Dequeued message for console log: ' + message);
-            await haystacks.consoleLog(namespacePrefix, functionName + eventName, `Success raw chunk data: ${chunk.toString()}`);
+            // Dequeued message for console log:
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage12 + message);
+            // Success raw chunk data:
+            await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage13 + chunk.toString());
             console.log(message);
           }
         }
@@ -451,15 +385,8 @@ export default function socketsServer() {
         // Failed retrieving data from client:
         console.log(bas.cCarRetNewLin + app_msg.cErrorSocketServerMessage02 + message);
         await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.cErrorSocketServerMessage02 + message);
-        await haystacks.consoleLog(namespacePrefix, functionName + eventName, `Failed raw chunk data: ${chunk.toString()}`);
-
-        // Log raw data for additional context
-        // console.log('RAW chunk data causing error: ', chunk.toString());
-        // try {
-        //   await fs.appendFile('socket_error_log.txt', `ERROR: ${message}\nRAW chunk data: ${chunk.toString()}\n\n`);
-        // } catch (fsError) {
-        //   console.log('ERROR: Failed to write to the log file with the message chunk! Error message: ' + fsError.message);
-        // }
+        // Failed raw chunk data:
+        await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage14 + chunk.toString());
       }
       await haystacks.consoleLog(namespacePrefix, functionName + eventName, msg.cEND_Event);
     };
