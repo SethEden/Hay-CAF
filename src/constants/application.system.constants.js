@@ -11,9 +11,10 @@
 
 // External imports
 import hayConst from '@haystacks/constants';
-const {bas, gen, phn, num, sys, unt, wrd} = hayConst;
+const {bas, elm, gen, phn, num, sys, unt, wrd} = hayConst;
 
 // hay-CAF system constants
+export const cbrowserName = wrd.cbrowser + wrd.cName; // browserName
 
 // Constants Validation
 export const cresolvedConstantsPath_Application = wrd.cresolved + wrd.cConstants + wrd.cPath + bas.cUnderscore + wrd.cApplication; // resolvedConstantsPath_Application
@@ -43,10 +44,11 @@ export const cCAFfeinated = bas.cCA + bas.cFf + bas.cei + bas.cna + phn.cted; //
 export const ctestcafe = wrd.ctest + wrd.ccafe; // testcafe
 export const cplaywright = wrd.cplay + wrd.cwright; // playwright
 export const ccypress = wrd.ccypress; // cypress
+export const cselenium = elm.cselenium; // selenium
 export const cwebdriver = wrd.cweb + wrd.cdriver; // webdriver
 export const cappium = wrd.capp + phn.cium; // appium
 export const cnightwatch = wrd.cnight + wrd.cwatch; // nightwatch
-export const cvalidExecutionEngines = ctestcafe + bas.cComa + cplaywright + bas.cComa + ccypress + bas.cComa + cwebdriver + bas.cComa + cappium + bas.cComa + cnightwatch; // testcafe,playwright,cypress,webdriver,appium,nightwatch
+export const cvalidExecutionEngines = ctestcafe + bas.cComa + cplaywright + bas.cComa + cselenium + bas.cComa + cwebdriver + bas.cComa + cappium; // testcafe,playwright,selenium,webdriver,appium
 export const cslowExe = wrd.cslow + gen.cExe; // slowExe
 export const ctestName = wrd.ctest + wrd.cName; // testName
 export const cCAF = bas.cCA + bas.cF; // CAF

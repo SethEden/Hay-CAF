@@ -20,7 +20,7 @@ import * as app_sys from '../../constants/application.system.constants.js';
  */
 export const applicationSystemConstantsValidation = [
   // Hay-CAF system constants
-
+  {Name: 'cbrowserName', Actual: app_sys.cbrowserName, Expected: 'browserName'},
 
   // Constants Validation
   {Name: 'cresolvedConstantsPath_Application', Actual: app_sys.cresolvedConstantsPath_Application, Expected: 'resolvedConstantsPath_Application'},
@@ -50,10 +50,11 @@ export const applicationSystemConstantsValidation = [
   {Name: 'ctestcafe', Actual: app_sys.ctestcafe, Expected: 'testcafe'},
   {Name: 'cplaywright', Actual: app_sys.cplaywright, Expected: 'playwright'},
   {Name: 'ccypress', Actual: app_sys.ccypress, Expected: 'cypress'},
+  {Name: 'cselenium', Actual: app_sys.cselenium, Expected: 'selenium'},
   {Name: 'cwebdriver', Actual: app_sys.cwebdriver, Expected: 'webdriver'},
   {Name: 'cappium', Actual: app_sys.cappium, Expected: 'appium'},
   {Name: 'cnightwatch', Actual: app_sys.cnightwatch, Expected: 'nightwatch'},
-  {Name: 'cvalidExecutionEngines', Actual: app_sys.cvalidExecutionEngines, Expected: 'testcafe,playwright,cypress,webdriver,appium,nightwatch'},
+  {Name: 'cvalidExecutionEngines', Actual: app_sys.cvalidExecutionEngines, Expected: 'testcafe,playwright,selenium,webdriver,appium'},
   {Name: 'cslowExe', Actual: app_sys.cslowExe, Expected: 'slowExe'},
   {Name: 'ctestName', Actual: app_sys.ctestName, Expected: 'testName'},
   {Name: 'cCAF', Actual: app_sys.cCAF, Expected: 'CAF'},
