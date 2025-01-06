@@ -43,12 +43,13 @@ export const cCAFfeinated = bas.cCA + bas.cFf + bas.cei + bas.cna + phn.cted; //
 // However, we will add them here so the system is ready to support them once we do finally get around to building our next generation test execution framework.
 export const ctestcafe = wrd.ctest + wrd.ccafe; // testcafe
 export const cplaywright = wrd.cplay + wrd.cwright; // playwright
+export const cpuppeteer = wrd.cpup + wrd.cpet + phn.ceer; // puppeteer
 export const ccypress = wrd.ccypress; // cypress
 export const cselenium = elm.cselenium; // selenium
 export const cwebdriver = wrd.cweb + wrd.cdriver; // webdriver
 export const cappium = wrd.capp + phn.cium; // appium
 export const cnightwatch = wrd.cnight + wrd.cwatch; // nightwatch
-export const cvalidExecutionEngines = ctestcafe + bas.cComa + cplaywright + bas.cComa + cselenium + bas.cComa + cwebdriver + bas.cComa + cappium; // testcafe,playwright,selenium,webdriver,appium
+export const cvalidExecutionEngines = ctestcafe + bas.cComa + cplaywright + bas.cComa + cpuppeteer + bas.cComa + cselenium + bas.cComa + cwebdriver + bas.cComa + cappium; // testcafe,playwright,selenium,webdriver,appium
 export const cslowExe = wrd.cslow + gen.cExe; // slowExe
 export const ctestName = wrd.ctest + wrd.cName; // testName
 export const cCAF = bas.cCA + bas.cF; // CAF

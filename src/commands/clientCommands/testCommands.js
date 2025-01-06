@@ -694,20 +694,21 @@ async function test(inputData, inputMetaData) {
         // For now we are hard-coding it to html.
         if (executionEngine === app_sys.ctestcafe) {
           testReporterCommandString = bas.cDoubleDash + wrd.creporter + bas.cSpace + wrd.chtml + bas.cColon + reportPath;
+
+          // Now we need to generate the test file name using a time stamp for the NOW moment.
+          let currentTimeStamp = await haystacks.executeBusinessRules([gen.cYYYYMMDD_HHmmss_SSS, ''], [biz.cgetNowMoment]);
+          // let currentTimeStamp = await haystacks.executeBusinessRules([currentTimeStampRaw, gen.cYYYYMMDD_HHmmss_SSS], [biz.creformatDeltaTime]);
+          // currentTimeStamp is:
+          await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ccurrentTimeStampIs + currentTimeStamp);
+          if (!testReporterCommandString.indexOf(bas.cForwardSlash, testReporterCommandString.length)) {
+            testReporterCommandString = testReporterCommandString + bas.cForwardSlash;
+          }
+          testReporterCommandString = testReporterCommandString + currentTimeStamp;
+          // NOTE: We want to add the test name as part of the report, but we will need to this below when we are generating the final test command.
         } else {
           testReporterCommandString = bas.cDash + wrd.creporter + bas.cColon + wrd.chtml + bas.cColon + reportPath;
         }
         
-        // Now we need to generate the test file name using a time stamp for the NOW moment.
-        let currentTimeStamp = await haystacks.executeBusinessRules([gen.cYYYYMMDD_HHmmss_SSS, ''], [biz.cgetNowMoment]);
-        // let currentTimeStamp = await haystacks.executeBusinessRules([currentTimeStampRaw, gen.cYYYYMMDD_HHmmss_SSS], [biz.creformatDeltaTime]);
-        // currentTimeStamp is:
-        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ccurrentTimeStampIs + currentTimeStamp);
-        if (!testReporterCommandString.indexOf(bas.cForwardSlash, testReporterCommandString.length)) {
-          testReporterCommandString = testReporterCommandString + bas.cForwardSlash;
-        }
-        testReporterCommandString = testReporterCommandString + currentTimeStamp;
-        // NOTE: We want to add the test name as part of the report, but we will need to this below when we are generating the final test command.
         // testReporterCommandString is:
         await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
       }
@@ -725,7 +726,9 @@ async function test(inputData, inputMetaData) {
           // So just append the file extension.
           // NOTE: In the future we might want to enhance this to allow for different report types such as XML or JSON.
           // For now we are hard-coding it to html.
-          testReporterCommandString = testReporterCommandString + bas.cDot + wrd.chtml;
+          if (executionEngine === app_sys.ctestcafe) {
+            testReporterCommandString = testReporterCommandString + bas.cDot + wrd.chtml;
+          }
           // testReporterCommandString is:
           await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
           testCommandString = testCommandString + bas.cSpace + testReporterCommandString + bas.cSpace;
@@ -752,7 +755,9 @@ async function test(inputData, inputMetaData) {
           if (reportEnabled === true) {
             // NOTE: In the future we might want to enhance this to allow for different report types such as XML or JSON.
             // For now we are hard-coding it to html.
-            testReporterCommandString = testReporterCommandString + bas.cUnderscore + testName + bas.cDot + wrd.chtml;
+            if (executionEngine === app_sys.ctestcafe) {
+              testReporterCommandString = testReporterCommandString + bas.cUnderscore + testName + bas.cDot + wrd.chtml;
+            }
             // testReporterCommandString is:
             await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
             testCommandString = testCommandString + bas.cSpace + testReporterCommandString + bas.cSpace;
