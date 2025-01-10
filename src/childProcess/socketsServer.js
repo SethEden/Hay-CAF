@@ -132,7 +132,6 @@ async function messageContainsTestResult(message) {
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cBEGIN_Function);
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cmessageIs + message);
   let returnData = false;
-  // const validResponses = [wrd.cpass, wrd.cwarning, wrd.cfail];
   if (message) {
     if (message.includes(app_msg.cTestResultsLog) && message.includes(wrd.cTest + bas.cUnderscore) && 
     (message.toLowerCase().includes(wrd.cpass) ||
@@ -326,15 +325,15 @@ export default function socketsServer() {
               // Extracted message from array item:
               await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage04 + objMessage);
 
-              if (objMessage && objMessage.includes(app_msg.cTestResultsLog) && objMessage.includes(wrd.cTest + bas.cUnderscore) && 
-              (objMessage.toLowerCase().includes(wrd.cpass) ||
-              objMessage.toLowerCase().includes(wrd.cwarning) ||
-              objMessage.toLowerCase().includes(wrd.cfail))) {
+              if (objMessage?.includes(app_msg.cTestResultsLog) && objMessage?.includes(wrd.cTest + bas.cUnderscore) && 
+              (objMessage?.toLowerCase()?.includes(wrd.cpass) ||
+              objMessage?.toLowerCase()?.includes(wrd.cwarning) ||
+              objMessage?.toLowerCase()?.includes(wrd.cfail))) {
                 // Identified test result in array item.
                 await haystacks.consoleLog(namespacePrefix, functionName + eventName, app_msg.csocketServerDataEventHandlerMessage05);
-                if (objMessage.toLowerCase().includes(wrd.cpass)) { testResult = wrd.cpass; }
-                else if (objMessage.toLowerCase().includes(wrd.cwarning)) { testResult = wrd.cwarning; }
-                else if (objMessage.toLowerCase().includes(wrd.cfail)) { testResult = wrd.cfail; }
+                if (objMessage?.toLowerCase()?.includes(wrd.cpass)) { testResult = wrd.cpass; }
+                else if (objMessage?.toLowerCase()?.includes(wrd.cwarning)) { testResult = wrd.cwarning; }
+                else if (objMessage?.toLowerCase()?.includes(wrd.cfail)) { testResult = wrd.cfail; }
 
                 // Exit the loop as soon as a matching item is found
                 break;
