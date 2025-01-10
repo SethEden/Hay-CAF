@@ -1,5 +1,5 @@
 {
   "Name": "hay-caf",
-  "Version": "0.0.6",
+  "Version": "0.0.7",
   "Description": "Haystacks Cloud Automation Framework: A demonstration testing automation framework application for the purposes of demonstrating the usage and integration of D-CAF, Hest, Hexiom, HayRunner, HayMonkey, and HayD-CAG in a single testing automation framework general cloud and mobile business solution. Build with the Haystacks/async automation platform."
 }
