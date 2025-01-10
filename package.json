@@ -43,8 +43,8 @@
   },
   "homepage": "https://github.com/SethEden/hay-CAF#readme",
   "dependencies": {
-    "@haystacks/async": "^0.2.14",
-    "@haystacks/constants": "^0.2.18",
+    "@haystacks/async": "^0.3.0",
+    "@haystacks/constants": "^0.3.0",
     "child_process": "^1.0.2",
     "dotenv": "^16.0.3",
     "lts": "^1.2.0",
