@@ -122,7 +122,7 @@ export const crawChunkData = wrd.craw + bas.cSpace + wrd.cchunk + bas.cSpace + w
 export const csafeJsonParseMessage01 = wrd.cpersistent + wrd.cBuffer + bas.cSpace + wrd.cafter + bas.cSpace + wrd.cappending + bas.cSpace + wrd.cnew + bas.cSpace + wrd.cchunk + bas.cSpace + wrd.cis + bas.cSpace + wrd.cnow + bas.cColon + bas.cSpace; // persistentBuffer after appending new chunk is now:
 export const csafeJsonParseMessage02 = wrd.cMessages + bas.cSpace + wrd.carray + bas.cSpace + wrd.cafter + bas.cSpace + wrd.cmessage + wrd.cDelimiter + bas.cSpace + wrd.csplit + bas.cColon + bas.cSpace; // Messages array after messageDelimiter split:
 export const csafeJsonParseMessage03 = wrd.cSuccessfully + bas.cSpace + wrd.cparsed + bas.cSpace + gen.cjson + bas.cSpace + wrd.cdata + sys.cSpaceIsColonSpace; // Successfully parsed json data is:
-export const csafeJsonParseMessage04 = gen.cJSON + bas.cSpace + wrd.cparse + bas.cSpace + wrd.cerror + bas.cSpace + wrd.cat + bas.cSpace + wrd.citeration + bas.cSpace; // JSON parse error at iteration
+export const csafeJsonParseMessage04 = gen.cJSON + bas.cSpace + wrd.cparse + bas.cSpace + wrd.cerror + bas.cSpace + wrd.cat + bas.cSpace + wrd.citeration + bas.cColon + bas.cSpace; // JSON parse error at iteration:
 export const csafeJsonParseMessage05 = wrd.cattempting + bas.cSpace + gen.cREGEX + bas.cSpace + wrd.cextraction + bas.cColon + bas.cSpace; // attempting REGEX extraction: 
 export const csafeJsonParseMessage06 = wrd.cError + bas.cDash + wrd.ccausing + bas.cSpace + wrd.cmessage + bas.cSpace + wrd.ccontent + bas.cColon + bas.cSpace; // Error-causing message content:
 export const csafeJsonParseMessage07 = wrd.cAttempting + bas.cSpace + gen.cREGEX + bas.cSpace + wrd.cextraction + bas.cSpace + wrd.cfor + bas.cSpace + wrd.cmatches + bas.cSpace + wrd.cin + bas.cSpace + wrd.cerror + bas.cDash + wrd.ccausing + bas.cSpace + wrd.cmessage + bas.cDot; // Attempting REGEX extraction for matches in error-causing message.
@@ -142,8 +142,8 @@ export const csocketServerDataEventHandlerMessage09 = wrd.cIdentified + bas.cSpa
 export const csocketServerDataEventHandlerMessage10 = wrd.cEnqueuing + bas.cSpace + wrd.cparsed + bas.cSpace + gen.cJSON + bas.cSpace + wrd.cto + bas.cSpace + wrd.cmessage + bas.cSpace + wrd.cqueue; // Enqueuing parsed JSON to message queue
 export const csocketServerDataEventHandlerMessage11 = wrd.cEnqueued + bas.cSpace + wrd.csuccessfully + bas.cDot + bas.cSpace + wrd.cQueue + bas.cSpace + wrd.csize + bas.cColon + bas.cSpace; // Enqueued successfully. Queue size:
 export const csocketServerDataEventHandlerMessage12 = wrd.cDequeued + bas.cSpace + wrd.cmessage + bas.cSpace + wrd.cfor + bas.cSpace + wrd.cconsole + bas.cSpace + wrd.clog + bas.cColon + bas.cSpace; // Dequeued message for console log:
-export const csocketServerDataEventHandlerMessage13 = wrd.cSuccess + crawChunkData; // Success raw chunk data:
-export const csocketServerDataEventHandlerMessage14 = wrd.cFailed + crawChunkData; // Failed raw chunk data:
+export const csocketServerDataEventHandlerMessage13 = wrd.cSuccess + bas.cSpace + crawChunkData; // Success raw chunk data:
+export const csocketServerDataEventHandlerMessage14 = wrd.cFailed + bas.cSpace + crawChunkData; // Failed raw chunk data:
 
 // ERROR Messages
 export const cErrorSetBoilerPlateTestPathAndFileNameMessage = msg.cERROR_Colon + wrd.cPlease + bas.cSpace + wrd.center + bas.cSpace + bas.ca + bas.cSpace + wrd.cvalid + bas.cSpace + wrd.cpath + bas.cSpace + wrd.cand + bas.cSpace + wrd.cfilename + bas.cSpace + wrd.cas + bas.cSpace + wrd.cinput + bas.cDot; // ERROR: Please enter a valid path and filename as input.

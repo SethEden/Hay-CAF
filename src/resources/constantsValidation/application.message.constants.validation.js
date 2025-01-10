@@ -123,7 +123,7 @@ export const applicationMessageConstantsValidation = [
   {Name: 'csafeJsonParseMessage01', Actual: app_msg.csafeJsonParseMessage01, Expected: 'persistentBuffer after appending new chunk is now: '},
   {Name: 'csafeJsonParseMessage02', Actual: app_msg.csafeJsonParseMessage02, Expected: 'Messages array after messageDelimiter split: '},
   {Name: 'csafeJsonParseMessage03', Actual: app_msg.csafeJsonParseMessage03, Expected: 'Successfully parsed json data is: '},
-  {Name: 'csafeJsonParseMessage04', Actual: app_msg.csafeJsonParseMessage04, Expected: 'JSON parse error at iteration'},
+  {Name: 'csafeJsonParseMessage04', Actual: app_msg.csafeJsonParseMessage04, Expected: 'JSON parse error at iteration: '},
   {Name: 'csafeJsonParseMessage05', Actual: app_msg.csafeJsonParseMessage05, Expected: 'attempting REGEX extraction: '},
   {Name: 'csafeJsonParseMessage06', Actual: app_msg.csafeJsonParseMessage06, Expected: 'Error-causing message content: '},
   {Name: 'csafeJsonParseMessage07', Actual: app_msg.csafeJsonParseMessage07, Expected: 'Attempting REGEX extraction for matches in error-causing message.'},
