@@ -284,10 +284,10 @@ async function setBrowsersList(inputData, inputMetaData) {
  * system to only accept the testcafe input, and as such testcafe is hard-coded in here, and a message will inform the user as such.
  * @param {array<string>} inputData An array that could actually contain anything,
  * depending on what the user entered. But the function filters all of that internally and
- * extracts the case the user has entered a name of a test driver engine, such as testcafe, Playwright, Cypress, Webdriver, appium, nightwatch.
+ * extracts the case the user has entered a name of a test driver engine, such as testcafe, playwright, puppeteer, webdriver, appium, selenium.
  * However, we actually force & hard-code the value to testcafe and pop a message as described above.
  * inputData[0] === 'setExecutionEngine'
- * inputData[1] === 'testcafe', 'cypress', 'playwright', 'nightwatch', 'webdriver', 'appium'
+ * inputData[1] === 'testcafe', 'puppeteer', 'playwright', 'selenium', 'webdriver', 'appium'
  * @param {string} inputMetaData Not used for this command.
  * @author Seth Hollingsead
  * @date 2023/11/13
@@ -300,14 +300,14 @@ async function setExecutionEngine(inputData, inputMetaData) {
   let returnData = [true, ];
   if (Array.isArray(inputData) && inputData.length >= 2) {
     if (app_sys.cvalidExecutionEngines.includes(inputData[1])) {
-      // WARNING: All valid execution engines are not currently supported by our testing engine.
-      console.log(app_msg.csetExecutionEngineMessage01);
-      // WARNING: Only testcafe is supported as a testing engine, until we can finish building our next generation system.
-      console.log(app_msg.csetExecutionEngineMessage02);
-      // WARNING: The execution engine will be hard coded to testcafe for now.
-      console.log(app_msg.csetExecutionEngineMessage03);
-      // TODO: Change the below app_sys.ctestcafe to be dynamic once the new testing framework is implemented.
-      await haystacks.setConfigurationSetting(wrd.csystem, app_cfg.cexecutionDriverEngine, app_sys.ctestcafe);
+      // // WARNING: All valid execution engines are not currently supported by our testing engine.
+      // console.log(app_msg.csetExecutionEngineMessage01);
+      // // WARNING: Only testcafe is supported as a testing engine, until we can finish building our next generation system.
+      // console.log(app_msg.csetExecutionEngineMessage02);
+      // // WARNING: The execution engine will be hard coded to testcafe for now.
+      // console.log(app_msg.csetExecutionEngineMessage03);
+      // // TODO: Change the below app_sys.ctestcafe to be dynamic once the new testing framework is implemented.
+      await haystacks.setConfigurationSetting(wrd.csystem, app_cfg.cexecutionDriverEngine, inputData[1]);
       // SUCCESS: executionDriverEngine configuration setting successfully changed.
       console.log(app_msg.cSuccessSetExecutionEngineMessage);
     } else {
@@ -566,18 +566,18 @@ async function test(inputData, inputMetaData) {
   let validTestParameters = false;
   let testPassed = false;
 
-  // TODO: Remove this hard-coded filter ONLY once we have completed the implementation of our NEW testing framework that supports multiple testing engines (playwright, cypress, webdriver, appium, testcafe).
-  // NOTE: I am going to hard-code the execution engine to testcafe, so even if the user changed it to something else, we are going to force-change and hard-code it here.
-  // We will also pop a message to inform the user that the only supported test execution engine is testcafe.
-  if (executionEngine !== app_sys.ctestcafe) {
-    // WARNING: All valid execution engines are not currently supported by our testing engine.
-    console.log(app_msg.csetExecutionEngineMessage01);
-    // WARNING: Only testcafe is supported as a testing engine, until we can finish building our next generation system.
-    console.log(app_msg.csetExecutionEngineMessage02);
-    // WARNING: The execution engine will be hard coded to testcafe for now.
-    console.log(app_msg.csetExecutionEngineMessage03);
-    executionEngine = app_sys.ctestcafe;
-  }
+  // // TODO: Remove this hard-coded filter ONLY once we have completed the implementation of our NEW testing framework that supports multiple testing engines (playwright, cypress, webdriver, appium, testcafe).
+  // // NOTE: I am going to hard-code the execution engine to testcafe, so even if the user changed it to something else, we are going to force-change and hard-code it here.
+  // // We will also pop a message to inform the user that the only supported test execution engine is testcafe.
+  // if (executionEngine !== app_sys.ctestcafe) {
+  //   // WARNING: All valid execution engines are not currently supported by our testing engine.
+  //   console.log(app_msg.csetExecutionEngineMessage01);
+  //   // WARNING: Only testcafe is supported as a testing engine, until we can finish building our next generation system.
+  //   console.log(app_msg.csetExecutionEngineMessage02);
+  //   // WARNING: The execution engine will be hard coded to testcafe for now.
+  //   console.log(app_msg.csetExecutionEngineMessage03);
+  //   executionEngine = app_sys.ctestcafe;
+  // }
 
   // boilerPlateTestPathAndFileName is:
   await haystacks.consoleLog(namespacePrefix, functionName, app_msg.cboilerPlateTestPathAndFileNameIs + boilerPlateTestPathAndFileName);
@@ -652,7 +652,10 @@ async function test(inputData, inputMetaData) {
     }
 
     // The CMD CLI command format to use for executing a single test:
+    // If using testcafe:
     // testcafe chrome ./TestBureau/SethEden/Tests/Default.test.js slowExe=true --reporter html:results/SethEden/reports/20231108.html testName=Writings 
+    // If using playwright, puppeteer, selenium, or webDriver, or anything else
+    // node ./src/testBureau/haystacksTech/default.test.js -tool:Playwright -testName:Test_LoginSubmit -browserName:chrome -reporter:html:results/haystacksTech/reports/20231108.html
 
     if (executionEngine !== '' && listOfBrowsers !== '' && boilerPlateTestPathAndFileName !== '' && (reportEnabled === true && reportPath !== '')) {
       validTestParameters = true;
@@ -677,24 +680,35 @@ async function test(inputData, inputMetaData) {
 
     if (validTestParameters === true) {
       // NOTE: At some point in the future hay-CAF will transition to using hayD-CAF rather than our current system.
-      // Then we can call test scripts using Playwright, Cypress, NightwatchJS, WebDriverIO, Appium and TestCafe.
-      // But for now I'm going to hard-code this to just using testcafe, because it's what we have, and it's what we can use.
-      testCommandString = executionEngine + bas.cSpace + listOfBrowsers + bas.cSpace + boilerPlateTestPathAndFileName + bas.cSpace;
+      // Then we can call test scripts using Playwright, Puppeteer, Selenium, WebDriverIO, Appium and TestCafe, HayST, or other.
+      if (executionEngine === app_sys.ctestcafe) {
+        testCommandString = executionEngine + bas.cSpace + listOfBrowsers + bas.cSpace + boilerPlateTestPathAndFileName + bas.cSpace;
+      } else {
+        let toolPrefix = bas.cDash + wrd.ctool + bas.cColon;
+        let browserNamePrefix = bas.cDash + app_sys.cbrowserName + bas.cColon;
+        testCommandString = wrd.cnode + bas.cSpace + boilerPlateTestPathAndFileName + bas.cSpace + toolPrefix + executionEngine + bas.cSpace + browserNamePrefix + listOfBrowsers + bas.cSpace;
+      }
 
       if (reportEnabled === true) {
         // NOTE: In the future we might want to enhance this to allow for different report types such as XML or JSON.
         // For now we are hard-coding it to html.
-        testReporterCommandString = bas.cDoubleDash + wrd.creporter + bas.cSpace + wrd.chtml + bas.cColon + reportPath;
-        // Now we need to generate the test file name using a time stamp for the NOW moment.
-        let currentTimeStamp = await haystacks.executeBusinessRules([gen.cYYYYMMDD_HHmmss_SSS, ''], [biz.cgetNowMoment]);
-        // let currentTimeStamp = await haystacks.executeBusinessRules([currentTimeStampRaw, gen.cYYYYMMDD_HHmmss_SSS], [biz.creformatDeltaTime]);
-        // currentTimeStamp is:
-        await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ccurrentTimeStampIs + currentTimeStamp);
-        if (!testReporterCommandString.indexOf(bas.cForwardSlash, testReporterCommandString.length)) {
-          testReporterCommandString = testReporterCommandString + bas.cForwardSlash;
+        if (executionEngine === app_sys.ctestcafe) {
+          testReporterCommandString = bas.cDoubleDash + wrd.creporter + bas.cSpace + wrd.chtml + bas.cColon + reportPath;
+
+          // Now we need to generate the test file name using a time stamp for the NOW moment.
+          let currentTimeStamp = await haystacks.executeBusinessRules([gen.cYYYYMMDD_HHmmss_SSS, ''], [biz.cgetNowMoment]);
+          // let currentTimeStamp = await haystacks.executeBusinessRules([currentTimeStampRaw, gen.cYYYYMMDD_HHmmss_SSS], [biz.creformatDeltaTime]);
+          // currentTimeStamp is:
+          await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ccurrentTimeStampIs + currentTimeStamp);
+          if (!testReporterCommandString.indexOf(bas.cForwardSlash, testReporterCommandString.length)) {
+            testReporterCommandString = testReporterCommandString + bas.cForwardSlash;
+          }
+          testReporterCommandString = testReporterCommandString + currentTimeStamp;
+          // NOTE: We want to add the test name as part of the report, but we will need to this below when we are generating the final test command.
+        } else {
+          testReporterCommandString = bas.cDash + wrd.creporter + bas.cColon + wrd.chtml + bas.cColon + reportPath;
         }
-        testReporterCommandString = testReporterCommandString + currentTimeStamp;
-        // NOTE: We want to add the test name as part of the report, but we will need to this below when we are generating the final test command.
+        
         // testReporterCommandString is:
         await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
       }
@@ -712,14 +726,20 @@ async function test(inputData, inputMetaData) {
           // So just append the file extension.
           // NOTE: In the future we might want to enhance this to allow for different report types such as XML or JSON.
           // For now we are hard-coding it to html.
-          testReporterCommandString = testReporterCommandString + bas.cDot + wrd.chtml;
+          if (executionEngine === app_sys.ctestcafe) {
+            testReporterCommandString = testReporterCommandString + bas.cDot + wrd.chtml;
+          }
           // testReporterCommandString is:
           await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
           testCommandString = testCommandString + bas.cSpace + testReporterCommandString + bas.cSpace;
           // testCommandString is:
           await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestCommandStringIs + testCommandString);
         }
-        testCommandString = testCommandString + app_sys.ctestName + bas.cEqual + listOfTestNamesToExecute;
+        if (executionEngine === app_sys.ctestcafe) {
+          testCommandString = testCommandString + app_sys.ctestName + bas.cEqual + listOfTestNamesToExecute;
+        } else {
+          testCommandString = testCommandString + bas.cDash + app_sys.ctestName + bas.cColon + listOfTestNamesToExecute;
+        }
         // testCommandString is:
         await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestCommandStringIs + testCommandString);
         testPassed = await haystacks.executeBusinessRules([testCommandString, commandType], [app_biz.cexecuteTestCommand]);
@@ -735,14 +755,20 @@ async function test(inputData, inputMetaData) {
           if (reportEnabled === true) {
             // NOTE: In the future we might want to enhance this to allow for different report types such as XML or JSON.
             // For now we are hard-coding it to html.
-            testReporterCommandString = testReporterCommandString + bas.cUnderscore + testName + bas.cDot + wrd.chtml;
+            if (executionEngine === app_sys.ctestcafe) {
+              testReporterCommandString = testReporterCommandString + bas.cUnderscore + testName + bas.cDot + wrd.chtml;
+            }
             // testReporterCommandString is:
             await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestReporterCommandStringIs + testReporterCommandString);
             testCommandString = testCommandString + bas.cSpace + testReporterCommandString + bas.cSpace;
             // testCommandString is:
             await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestCommandStringIs + testCommandString);
           }
-          testCommandString = testCommandString + app_sys.ctestName + bas.cEqual + testName;
+          if (executionEngine === app_sys.ctestcafe) {
+            testCommandString = testCommandString + app_sys.ctestName + bas.cEqual + testName;
+          } else {
+            testCommandString = testCommandString + bas.cDash + app_sys.ctestName + bas.cColon + testName;
+          }
           // testCommandString is:
           await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestCommandStringIs + testCommandString);
           testPassed = await haystacks.executeBusinessRules([testCommandString, commandType], [app_biz.cexecuteTestCommand]);

@@ -54,17 +54,24 @@ async function buildArrayOfTestNames(inputData, inputMetaData) {
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cinputMetaDataIs + inputMetaData);
   let returnData = inputMetaData;
   let testFileName = await haystacks.executeBusinessRules([inputData, ''], [biz.cgetFileNameFromPath, biz.cremoveFileExtensionFromFileName],);
+  let executionEngine = await haystacks.getConfigurationSetting(wrd.csystem, app_cfg.cexecutionDriverEngine);
+  // executionEngine is:
+  await haystacks.consoleLog(namespacePrefix, functionName, app_msg.cexecutionEngineIs + executionEngine);
 
   // testFileName is:
   await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestFileNameIs + testFileName);
   // Now the test file name should have a prefix "Test_", lets make sure we only parse files with this prefix, otherwise they are not properly formatted tests,
   // and the testing framework would have trouble executing them anyway!
   if (testFileName.includes(wrd.cTest + bas.cUnderscore) === true) {
-    let testFileNameArray = testFileName.split(bas.cUnderscore); // Split the filename into an array so we can remove the prefix "Test_".
-    // testFileNameArray is:
-    await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestFileNameArrayIs + JSON.stringify(testFileNameArray));
-    testFileNameArray.shift(); // Remove the "Test" prefix, this means we now just have the test name, not the file name.
-    returnData.push(testFileNameArray[0]); // Ad the test name to the array of tests to execute.
+    if (executionEngine === app_sys.ctestcafe) {
+      let testFileNameArray = testFileName.split(bas.cUnderscore); // Split the filename into an array so we can remove the prefix "Test_".
+      // testFileNameArray is:
+      await haystacks.consoleLog(namespacePrefix, functionName, app_msg.ctestFileNameArrayIs + JSON.stringify(testFileNameArray));
+      testFileNameArray.shift(); // Remove the "Test" prefix, this means we now just have the test name, not the file name.
+      returnData.push(testFileNameArray[0]); // Add the test name to the array of tests to execute.
+    } else {
+      returnData.push(testFileName);
+    }
   } // End-if (testFileName.includes(wrd.cTest + bas.cUnderscore) === true)
   await haystacks.consoleLog(namespacePrefix,functionName,msg.creturnDataIs + JSON.stringify(returnData));
   await haystacks.consoleLog(namespacePrefix, functionName, msg.cEND_Function);

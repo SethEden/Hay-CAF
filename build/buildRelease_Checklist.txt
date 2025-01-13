@@ -50,30 +50,30 @@ which will bring the new version into the develop as part of the staging process
 num run docs
  - Again commit the changes
 
-15. Execute the build-release script in the application to compile the latest code and generate release binaries or release zip package.
+16. Execute the build-release script in the application to compile the latest code and generate release binaries or release zip package.
 Command is:
 npm run release
 DO NOT APPROVE!!!
 
-16. Again push the code changes to the feature branch. DO NOT APPROVE!!!
+17. Again push the code changes to the feature branch. DO NOT APPROVE!!!
 
-17. Once sonarCloud is done running again, increment the version numbers for any dependency apps that use the @haystacks/async repo.
+18. Once sonarCloud is done running again, increment the version numbers for any dependency apps that use the @haystacks/async repo.
 DO NOT APPROVE!!!
 
-18. Again push the latest changes to the feature branch. DO NOT APPROVE!!!
+19. Again push the latest changes to the feature branch. DO NOT APPROVE!!!
 
-19. Delete the contents of the bin folder, and push these changes to the branch. DO NOT APPROVE!!!
+20. Delete the contents of the bin folder, and push these changes to the branch. DO NOT APPROVE!!!
 
-20. Approve the Merge Request & delete the branch. (NOW APPROVE!!)
+21. Approve the Merge Request & delete the branch. (NOW APPROVE!!)
 
-21. Create another Merge Request to merge the develop branch to production as part of the release.
+22. Create another Merge Request to merge the develop branch to production as part of the release.
 
-22. Wait for SonarCloud to finish executing and then approve if its green.
+23. Wait for SonarCloud to finish executing and then approve if its green.
 
-23. Confirm that the latest release is published on npm.
+24. Confirm that the latest release is published on npm.
 
-24. Go through all the dependency apps and switch back to the develop branch.
+25. Go through all the dependency apps and switch back to the develop branch.
 
-25. Pull the latest code.
+26. Pull the latest code.
 
-26. execute "npm i" again to re-install pulling the latest code that was just published on npm wtih the latest version number.
+27. execute "npm i" again to re-install pulling the latest code that was just published on npm with the latest version number.
