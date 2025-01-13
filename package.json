@@ -1,6 +1,6 @@
 {
   "name": "hay-caf",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Haystacks Cloud Automation Framework: A demonstration testing automation framework application for the purposes of demonstrating the usage and integration of D-CAF, Hest, Hexiom, HayRunner, HayMonkey, and HayD-CAG in a single testing automation framework general cloud and mobile business solution. Build with the Haystacks/async automation platform.",
   "main": "./src/hay-CAF.js",
   "type": "module",
@@ -43,8 +43,8 @@
   },
   "homepage": "https://github.com/SethEden/hay-CAF#readme",
   "dependencies": {
-    "@haystacks/async": "^0.2.14",
-    "@haystacks/constants": "^0.2.18",
+    "@haystacks/async": "^0.3.0",
+    "@haystacks/constants": "^0.3.0",
     "child_process": "^1.0.2",
     "dotenv": "^16.0.3",
     "lts": "^1.2.0",
